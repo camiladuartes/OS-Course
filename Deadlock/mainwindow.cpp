@@ -81,37 +81,27 @@ void MainWindow::on_pushButton_2_clicked()
     trem5->terminate();
 }
 
-int velMap(int position)
-{
-    int count = 99;
-    for(int i = 0; i <= 99; i++){
-        if (i == position)
-            return count;
-        count --;
-    }
-}
-
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
-    trem1->velocidade = velMap(position);
+    trem1->velocidade = (99 - position);
 }
 
 void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 {
-    trem2->velocidade = velMap(position);
+    trem2->velocidade = (99 - position);
 }
 
 void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 {
-    trem3->velocidade = velMap(position);
+    trem3->velocidade = (99 - position);
 }
 
 void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 {
-    trem4->velocidade = velMap(position);
+    trem4->velocidade = (99 - position);
 }
 
 void MainWindow::on_horizontalSlider_5_sliderMoved(int position)
 {
-    trem5->velocidade = velMap(position);
+    trem5->velocidade = (99 - position);
 }
