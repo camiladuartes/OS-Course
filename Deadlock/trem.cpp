@@ -1,20 +1,22 @@
 // >>> Jantar dos filósofos utilizando hierarquia de recursos <<<
-    
+
 // A solução utilizada para resolver o problema do jantar dos filósofos,
 // tratando as regiões críticas que cada trem atravessa e evitando deadlocks foi
 // a solução de hierarquia de recursos que, atribui um pedido parcial aos recursos (garfos)
 // e estabelece uma ordem/convenção onde todos os garfos serão solicitados em ordem.
 // Os garfos são enumerados de 1 a 5 (no nosso caso, as regiões são enumeradas de 1 a 7)
-// e cada filósofo sempre deverá pegar o garfo de menor número e o próximo garfo de
-// menor número (no nosso caso, cada trem pega a região crítica de menor valor que ele
-// irá passar, em seguida pega a próxima rergião de menor valor e assim sucessivamente,
+// e cada filósofo sempre deverá pegar o primeiro garfo da ordem estabelicida e o próximo garfo da
+// ordem estabelecida (no nosso caso, cada trem pega a primeira região crítica que ele
+// irá passar, em seguida pega a próxima rergião e assim sucessivamente,
 // e devolve a região crítica assim que passar por ela para que outro trem possa pegá-la).
 // Essa solução não leva em consideração a ordem da devolução dos garfos.
 
 // Ou seja, assim que o trem estiver prestes a entrar na primeira região crítica,
-// bloqueamos todos os mutex das regiões críticas em ordem de passagem. E assim 
-// que o trem sair de uma região crítica, liberamos o mutex daquela região. Dessa forma,
-// não existirão deadlocks.
+// bloqueamos todos os mutex das regiões críticas em ordem de passagem. E assim
+// que o trem sair de uma região crítica, liberamos o mutex daquela região. Além disso,
+// caso algum dos mutexes da região crítica de um determinado trem não consiga ser bloqueado no
+// momento, se qualquer um destes mutex já tiver sido bloqueado por outro trem, desbloqueamos eles,
+// e tentamos bloquear cada um na ordem novamente. Dessa forma, não existirão deadlocks.
 
 // https://en.wikipedia.org/wiki/Dining_philosophers_problem
 
@@ -50,9 +52,9 @@ void Trem::run() {
         case 1:     //Trem 1
             if (y == 10 && x <300)
             {
-		// Entrando no ponto critico 1
+                // Entrando no ponto critico 1
                 if (gotMutex[1] == false && gotMutex[3] == false && x >= 274) {
-		    // Pegando todos os mutex das regiões que o Trem 1 irá passar (1 e 3)
+                    // Pegando todos os mutex das regiões que o Trem 1 irá passar (1 e 3)
                     while(true){
                         std::cout << "Trem 1 - Tentando entrar mutex 1" << std::endl;
                         int res1 = pthread_mutex_trylock(&rc1);
@@ -76,7 +78,7 @@ void Trem::run() {
             else if (x == 300 && y < 126) {
                 y+=10;
             }
-            else if (x > 50 && y == 130) { 
+            else if (x > 50 && y == 130) {
                 // Saindo do ponto critico 1 e liberando o mutex
                 if (gotMutex[1] && x <= 274) {
                     pthread_mutex_unlock(&rc1);
@@ -84,7 +86,7 @@ void Trem::run() {
                     gotMutex[1] = false;
                 }
 
-		// Saindo do pronto crítico 3 e liberando o mutex
+                // Saindo do pronto crítico 3 e liberando o mutex
                 if (gotMutex[3] == true && x <= 150) {
                     std::cout << "Trem 1 - Saiu mutex 3" << std::endl;
                     pthread_mutex_unlock(&rc3);
@@ -98,7 +100,7 @@ void Trem::run() {
             emit updateGUI(ID, x,y);    //Emite um sinal
             break;
         case 2: //Trem 2
-	    // Entrando no ponto crítico 2
+            // Entrando no ponto crítico 2
             if (y == 10 && x <550)
             {
                 if (gotMutex[2] == false &&
@@ -107,7 +109,7 @@ void Trem::run() {
                     gotMutex[1] == false &&
                     x >= 524)
                 {
-		    // Pegando todos os mutex das regiões que o Trem 2 irá passar (2, 5, 4 e 1)
+                    // Pegando todos os mutex das regiões que o Trem 2 irá passar (2, 5, 4 e 1)
                     while(true){
                         std::cout << "Trem 2 - Tentando entrar mutex 2" << std::endl;
                         int res2 = pthread_mutex_trylock(&rc2);
@@ -157,7 +159,7 @@ void Trem::run() {
                     gotMutex[2] = false;
                 }
 
-		// Saindo do ponto critico 5 e liberando o mutex
+                // Saindo do ponto critico 5 e liberando o mutex
                 if (gotMutex[5] == true && x <= 400) {
                     pthread_mutex_unlock(&rc5);
                     std::cout << "Trem 2 - Saiu mutex 5" << std::endl;
@@ -190,11 +192,11 @@ void Trem::run() {
                 y+=10;
             }
 
-	    // Entrando no ponto crítico 6
+            // Entrando no ponto crítico 6
             else if (x > 550 && y == 130)
             {
                 if(gotMutex[6] == false && gotMutex[2] == false && x < 700) {
-		    // Pegando todos os mutex das regiões que o Trem 3 irá passar (6 e 2)
+                    // Pegando todos os mutex das regiões que o Trem 3 irá passar (6 e 2)
                     while(true){
                         std::cout << "Trem 3 - Tentando entrar mutex 6" << std::endl;
                         int res6 = pthread_mutex_trylock(&rc6);
@@ -257,9 +259,9 @@ void Trem::run() {
 
             else
             {
-		// Entrando no ponto crítico 3
+                // Entrando no ponto crítico 3
                 if(gotMutex[3] == false && gotMutex[4] == false && gotMutex[7] == false && y < 160) {
-		    // Pegando todos os mutex das regiões que o Trem 4 irá passar (3, 4 e 7)
+                    // Pegando todos os mutex das regiões que o Trem 4 irá passar (3, 4 e 7)
                     while(true){
                         std::cout << "Trem 4 - Tentando entrar mutex 3" << std::endl;
                         int res3 = pthread_mutex_trylock(&rc3);
@@ -316,9 +318,9 @@ void Trem::run() {
 
             else if (x > 420 && y == 250)
             {
-		// Entrando no ponto crítico 7
+                // Entrando no ponto crítico 7
                 if(gotMutex[7] == false && gotMutex[5] == false && gotMutex[6] == false && x < 460) {
-		    // Pegando todos os mutex das regiões que o Trem 5 irá passar (7, 5 e 6)
+                    // Pegando todos os mutex das regiões que o Trem 5 irá passar (7, 5 e 6)
                     while(true){
                         std::cout << "Trem 5 - Tentando entrar mutex 7" << std::endl;
                         int res7 = pthread_mutex_trylock(&rc7);
@@ -359,7 +361,3 @@ void Trem::run() {
         while(velocidade == 99){}
     }
 }
-
-
-
-
