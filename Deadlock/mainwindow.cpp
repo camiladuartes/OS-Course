@@ -81,26 +81,31 @@ void MainWindow::on_pushButton_2_clicked()
     trem5->terminate();
 }
 
+// Ao mover o slider, altera a velocidade do Trem 1
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     trem1->velocidade = (99 - position);
 }
 
+// Ao mover o slider, altera a velocidade do Trem 2
 void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 {
     trem2->velocidade = (99 - position);
 }
 
+// Ao mover o slider, altera a velocidade do Trem 3
 void MainWindow::on_horizontalSlider_3_sliderMoved(int position)
 {
     trem3->velocidade = (99 - position);
 }
 
+// Ao mover o slider, altera a velocidade do Trem 4
 void MainWindow::on_horizontalSlider_4_sliderMoved(int position)
 {
     trem4->velocidade = (99 - position);
 }
 
+// Ao mover o slider, altera a velocidade do Trem 5
 void MainWindow::on_horizontalSlider_5_sliderMoved(int position)
 {
     trem5->velocidade = (99 - position);
