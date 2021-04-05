@@ -29,10 +29,22 @@ void Trem::run(){
             // anda direita x
             if (y == 10 && x <300)
             {
-                // entrando no ponto critico 1
                 if (gotMutex[1] == false && gotMutex[3] == false && x >= 274) {
-                    pthread_mutex_lock(&rc1);
-                    pthread_mutex_lock(&rc3);
+                    while(true){
+                        std::cout << "Trem 1 - Tentando entrar mutex 1" << std::endl;
+                        int res1 = pthread_mutex_trylock(&rc1);
+                        std::cout << "Trem 1 - Tentando entrar mutex 3" << std::endl;
+                        int res3 = pthread_mutex_trylock(&rc3);
+                        if(res1 == 0 && res3 == 0){
+                            std::cout << "Trem 1 - Entrou mutex 1" << std::endl;
+                            std::cout << "Trem 1 - Entrou mutex 3" << std::endl;
+                            break;
+                        }
+                        if(res1 == 0)
+                            pthread_mutex_unlock(&rc1);
+                        if(res3 == 0)
+                            pthread_mutex_unlock(&rc3);
+                    }
                     gotMutex[1] = true;
                     gotMutex[3] = true;
                 }
@@ -49,9 +61,11 @@ void Trem::run(){
                 //saindo do ponto critico 1
                 if (gotMutex[1] == true && x <= 274) {
                     pthread_mutex_unlock(&rc1);
+                    std::cout << "Trem 1 - Saiu mutex 1" << std::endl;
                     gotMutex[1] = false;
                 }
                 if (gotMutex[3] == true && x <= 150) {
+                    std::cout << "Trem 1 - Saiu mutex 3" << std::endl;
                     pthread_mutex_unlock(&rc3);
                     gotMutex[3] = false;
                 }
@@ -73,10 +87,31 @@ void Trem::run(){
                     gotMutex[1] == false &&
                     x >= 524)
                 {
-                    pthread_mutex_lock(&rc2);
-                    pthread_mutex_lock(&rc5);
-                    pthread_mutex_lock(&rc4);
-                    pthread_mutex_lock(&rc1);
+                    while(true){
+                        std::cout << "Trem 2 - Tentando entrar mutex 2" << std::endl;
+                        int res2 = pthread_mutex_trylock(&rc2);
+                        std::cout << "Trem 2 - Tentando entrar mutex 5" << std::endl;
+                        int res5 = pthread_mutex_trylock(&rc5);
+                        std::cout << "Trem 2 - Tentando entrar mutex 4" << std::endl;
+                        int res4 = pthread_mutex_trylock(&rc4);
+                        std::cout << "Trem 2 - Tentando entrar mutex 1" << std::endl;
+                        int res1 = pthread_mutex_trylock(&rc1);
+                        if(res2 == 0 && res5 == 0 && res4 == 0 && res1 == 0){
+                            std::cout << "Trem 2 - Entrou mutex 2" << std::endl;
+                            std::cout << "Trem 2 - Entrou mutex 5" << std::endl;
+                            std::cout << "Trem 2 - Entrou mutex 4" << std::endl;
+                            std::cout << "Trem 2 - Entrou mutex 1" << std::endl;
+                            break;
+                        }
+                        if(res2 == 0)
+                            pthread_mutex_unlock(&rc2);
+                        if(res5 == 0)
+                            pthread_mutex_unlock(&rc5);
+                        if(res4 == 0)
+                            pthread_mutex_unlock(&rc4);
+                        if(res1 == 0)
+                            pthread_mutex_unlock(&rc1);
+                    }
                     gotMutex[2] = true;
                     gotMutex[5] = true;
                     gotMutex[4] = true;
@@ -84,6 +119,7 @@ void Trem::run(){
                 }
                 if (gotMutex[1] == true && x > 321 && x < 350 ) {
                     pthread_mutex_unlock(&rc1);
+                    std::cout << "Trem 2 - Saiu mutex 1" << std::endl;
                     gotMutex[1] = false;
                 }
                 x+=10;
@@ -96,10 +132,12 @@ void Trem::run(){
             {
                 if (gotMutex[2] == true && x <= 524) {
                     pthread_mutex_unlock(&rc2);
+                    std::cout << "Trem 2 - Saiu mutex 2" << std::endl;
                     gotMutex[2] = false;
                 }
-                if (gotMutex[5] == true && x <= 648) {
+                if (gotMutex[5] == true && x <= 400) {
                     pthread_mutex_unlock(&rc5);
+                    std::cout << "Trem 2 - Saiu mutex 5" << std::endl;
                     gotMutex[5] = false;
                 }
                 x-=10;
@@ -108,6 +146,7 @@ void Trem::run(){
             {
                 if (gotMutex[4] == true) {
                     pthread_mutex_unlock(&rc4);
+                    std::cout << "Trem 2 - Saiu mutex 4" << std::endl;
                     gotMutex[4] = false;
                 }
                 y-=10;
@@ -119,6 +158,7 @@ void Trem::run(){
             {
                 if(gotMutex[2] == true && x > 575) {
                     pthread_mutex_unlock(&rc2);
+                    std::cout << "Trem 3 - Saiu mutex 2" << std::endl;
                     gotMutex[2] = false;
                 }
                 x+=10;
@@ -130,8 +170,21 @@ void Trem::run(){
             else if (x > 550 && y == 130)
             {
                 if(gotMutex[6] == false && gotMutex[2] == false && x < 700) {
-                    pthread_mutex_lock(&rc6);
-                    pthread_mutex_lock(&rc2);
+                    while(true){
+                        std::cout << "Trem 3 - Tentando entrar mutex 6" << std::endl;
+                        int res6 = pthread_mutex_trylock(&rc6);
+                        std::cout << "Trem 3 - Tentando entrar mutex 2" << std::endl;
+                        int res2 = pthread_mutex_trylock(&rc2);
+                        if(res6 == 0 && res2 == 0){
+                            std::cout << "Trem 3 - Entrou mutex 6" << std::endl;
+                            std::cout << "Trem 3 - Entrou mutex 2" << std::endl;
+                            break;
+                        }
+                        if(res6 == 0)
+                            pthread_mutex_unlock(&rc6);
+                        if(res2 == 0)
+                            pthread_mutex_unlock(&rc2);
+                    }
                     gotMutex[6] = true;
                     gotMutex[2] = true;
                 }
@@ -141,6 +194,7 @@ void Trem::run(){
             {
                 if(gotMutex[6] == true && y < 125) {
                     pthread_mutex_unlock(&rc6);
+                    std::cout << "Trem 3 - Saiu mutex 6" << std::endl;
                     gotMutex[6] = false;
                 }
                 y-=10;
@@ -152,6 +206,7 @@ void Trem::run(){
             {
                 if(gotMutex[3] == true && x > 320) {
                     pthread_mutex_unlock(&rc3);
+                    std::cout << "Trem 4 - Saiu mutex 3" << std::endl;
                     gotMutex[3] = false;
                 }
                 x+=10;
@@ -160,6 +215,7 @@ void Trem::run(){
             {
                 if(gotMutex[4] == true && y > 150) {
                     pthread_mutex_unlock(&rc4);
+                    std::cout << "Trem 4 - Saiu mutex 4" << std::endl;
                     gotMutex[4] = false;
                 }
                 y+=10;
@@ -168,6 +224,7 @@ void Trem::run(){
             {
                 if(gotMutex[7] == true && x < 400) {
                     pthread_mutex_unlock(&rc7);
+                    std::cout << "Trem 4 - Saiu mutex 7" << std::endl;
                     gotMutex[7] = false;
                 }
                 x-=10;
@@ -175,9 +232,26 @@ void Trem::run(){
             else
             {
                 if(gotMutex[3] == false && gotMutex[4] == false && gotMutex[7] == false && y < 160) {
-                    pthread_mutex_lock(&rc3);
-                    pthread_mutex_lock(&rc4);
-                    pthread_mutex_lock(&rc7);
+                    while(true){
+                        std::cout << "Trem 4 - Tentando entrar mutex 3" << std::endl;
+                        int res3 = pthread_mutex_trylock(&rc3);
+                        std::cout << "Trem 4 - Tentando entrar mutex 4" << std::endl;
+                        int res4 = pthread_mutex_trylock(&rc4);
+                        std::cout << "Trem 4 - Tentando entrar mutex 7" << std::endl;
+                        int res7 = pthread_mutex_trylock(&rc7);
+                        if(res3 == 0 && res4 == 0 && res7 == 0){
+                            std::cout << "Trem 4 - Entrou mutex 3" << std::endl;
+                            std::cout << "Trem 4 - Entrou mutex 4" << std::endl;
+                            std::cout << "Trem 4 - Entrou mutex 7" << std::endl;
+                            break;
+                        }
+                        if(res3 == 0)
+                            pthread_mutex_unlock(&rc3);
+                        if(res4 == 0)
+                            pthread_mutex_unlock(&rc4);
+                        if(res7 == 0)
+                            pthread_mutex_unlock(&rc7);
+                    }
                     gotMutex[3] = true;
                     gotMutex[4] = true;
                     gotMutex[7] = true;
@@ -191,10 +265,12 @@ void Trem::run(){
             {
                 if(gotMutex[7] == true) {
                     pthread_mutex_unlock(&rc7);
+                    std::cout << "Trem 5 - Saiu mutex 7" << std::endl;
                     gotMutex[7] = false;
                 }
                 if(gotMutex[5] == true && x > 570) {
                     pthread_mutex_unlock(&rc5);
+                    std::cout << "Trem 5 - Saiu mutex 5" << std::endl;
                     gotMutex[5] = false;
                 }
                 x+=10;
@@ -203,6 +279,7 @@ void Trem::run(){
             {
                 if(gotMutex[6] == true) {
                     pthread_mutex_unlock(&rc6);
+                    std::cout << "Trem 5 - Saiu mutex 6" << std::endl;
                     gotMutex[6] = false;
                 }
                 y+=10;
@@ -210,9 +287,26 @@ void Trem::run(){
             else if (x > 420 && y == 250)
             {
                 if(gotMutex[7] == false && gotMutex[5] == false && gotMutex[6] == false && x < 460) {
-                    pthread_mutex_lock(&rc7);
-                    pthread_mutex_lock(&rc5);
-                    pthread_mutex_lock(&rc6);
+                    while(true){
+                        std::cout << "Trem 5 - Tentando entrar mutex 7" << std::endl;
+                        int res7 = pthread_mutex_trylock(&rc7);
+                        std::cout << "Trem 5 - Tentando entrar mutex 5" << std::endl;
+                        int res5 = pthread_mutex_trylock(&rc5);
+                        std::cout << "Trem 5 - Tentando entrar mutex 6" << std::endl;
+                        int res6 = pthread_mutex_trylock(&rc6);
+                        if(res7 == 0 && res5 == 0 && res6 == 0){
+                            std::cout << "Trem 5 - Entrou mutex 7" << std::endl;
+                            std::cout << "Trem 5 - Entrou mutex 5" << std::endl;
+                            std::cout << "Trem 5 - Entrou mutex 6" << std::endl;
+                            break;
+                        }
+                        if(res7 == 0)
+                            pthread_mutex_unlock(&rc7);
+                        if(res5 == 0)
+                            pthread_mutex_unlock(&rc5);
+                        if(res6 == 0)
+                            pthread_mutex_unlock(&rc6);
+                    }
                     gotMutex[7] = true;
                     gotMutex[5] = true;
                     gotMutex[6] = true;
